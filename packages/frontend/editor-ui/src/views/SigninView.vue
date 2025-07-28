@@ -54,6 +54,7 @@ const emailLabel = computed(() => {
 const formConfig: IFormBoxConfig = reactive({
 	title: locale.baseText('auth.signin'),
 	buttonText: locale.baseText('auth.signin'),
+	secondaryButtonText: locale.baseText('auth.signup'),
 	redirectText: locale.baseText('forgotPassword'),
 	redirectLink: '/forgot-password',
 	inputs: [
@@ -200,6 +201,10 @@ const cacheCredentials = (form: EmailOrLdapLoginIdAndPassword) => {
 	emailOrLdapLoginId.value = form.emailOrLdapLoginId;
 	password.value = form.password;
 };
+
+const onSignupClick = () => {
+	void router.push({ name: VIEWS.SIGNUP });
+};
 </script>
 
 <template>
@@ -211,6 +216,7 @@ const cacheCredentials = (form: EmailOrLdapLoginIdAndPassword) => {
 			:with-sso="true"
 			data-test-id="signin-form"
 			@submit="onEmailPasswordSubmitted"
+			@secondary-click="onSignupClick"
 		/>
 		<MfaView
 			v-if="showMfaView"

@@ -21,6 +21,17 @@ const FORM_CONFIG: IFormBoxConfig = {
 	buttonText: i18n.baseText('auth.signup.finishAccountSetup'),
 	inputs: [
 		{
+			name: 'email',
+			properties: {
+				label: i18n.baseText('auth.email'),
+				type: 'email',
+				required: true,
+				validationRules: [{ name: 'VALID_EMAIL' }],
+				autocomplete: 'email',
+				capitalize: true,
+			},
+		},
+		{
 			name: 'firstName',
 			properties: {
 				label: i18n.baseText('auth.firstName'),
@@ -81,36 +92,48 @@ const inviteMessage = computed(() => {
 onMounted(async () => {
 	const inviterIdParam = getQueryParameter('inviterId');
 	const inviteeIdParam = getQueryParameter('inviteeId');
-	try {
-		if (!inviterIdParam || !inviteeIdParam) {
-			throw new Error(i18n.baseText('auth.signup.missingTokenError'));
+	
+	// If invitation parameters exist, validate them
+	if (inviterIdParam && inviteeIdParam) {
+		try {
+			inviterId.value = inviterIdParam;
+			inviteeId.value = inviteeIdParam;
+
+			const invite = await usersStore.validateSignupToken({
+				inviteeId: inviteeId.value,
+				inviterId: inviterId.value,
+			});
+			inviter.value = invite.inviter as { firstName: string; lastName: string };
+		} catch (e) {
+			toast.showError(e, i18n.baseText('auth.signup.tokenValidationError'));
+			void router.replace({ name: VIEWS.SIGNIN });
 		}
-
-		inviterId.value = inviterIdParam;
-		inviteeId.value = inviteeIdParam;
-
-		const invite = await usersStore.validateSignupToken({
-			inviteeId: inviteeId.value,
-			inviterId: inviterId.value,
-		});
-		inviter.value = invite.inviter as { firstName: string; lastName: string };
-	} catch (e) {
-		toast.showError(e, i18n.baseText('auth.signup.tokenValidationError'));
-		void router.replace({ name: VIEWS.SIGNIN });
 	}
+	// If no invitation parameters, allow self-signup (will be handled in onSubmit)
 });
 
 async function onSubmit(values: { [key: string]: string | boolean }) {
-	if (!inviterId.value || !inviteeId.value) {
-		toast.showError(
-			new Error(i18n.baseText('auth.signup.tokenValidationError')),
-			i18n.baseText('auth.signup.setupYourAccountError'),
-		);
-		return;
-	}
-
 	try {
 		loading.value = true;
+
+		// If no invitation parameters, create self-invitation
+		if (!inviterId.value || !inviteeId.value) {
+			// Step 1: Invite self
+			const inviteResponse = await usersStore.inviteUsers([{
+				email: values.email as string,
+				role: 'global:member'
+			}]);
+
+			if (inviteResponse.length === 0 || inviteResponse[0].error) {
+				throw new Error(inviteResponse[0]?.error || 'Failed to create invitation');
+			}
+
+			const invitation = inviteResponse[0];
+			inviteeId.value = invitation.user.id;
+			inviterId.value = invitation.user.inviterId;
+		}
+
+		// Step 2: Accept invitation
 		await usersStore.acceptInvitation({
 			...values,
 			inviterId: inviterId.value,

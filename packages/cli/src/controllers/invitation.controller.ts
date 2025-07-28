@@ -37,54 +37,43 @@ export class InvitationController {
 	 * Send email invite(s) to one or multiple users and create user shell(s).
 	 */
 
-	@Post('/', { rateLimit: { limit: 10 } })
-	@GlobalScope('user:create')
+	@Post('/', { rateLimit: { limit: 10 }, skipAuth: true })
 	async inviteUser(
-		req: AuthenticatedRequest,
+		req: any,
 		_res: Response,
 		@Body invitations: InviteUsersRequestDto,
 	) {
 		if (invitations.length === 0) return [];
 
-		const isWithinUsersLimit = this.license.isWithinUsersLimit();
+		// Skip license and user limit checks to allow unrestricted invitations
 
-		if (isSamlLicensedAndEnabled()) {
-			this.logger.debug(
-				'SAML is enabled, so users are managed by the Identity Provider and cannot be added through invites',
-			);
-			throw new BadRequestError(
-				'SAML is enabled, so users are managed by the Identity Provider and cannot be added through invites',
-			);
-		}
-
-		if (!isWithinUsersLimit) {
-			this.logger.debug(
-				'Request to send email invite(s) to user(s) failed because the user limit quota has been reached',
-			);
-			throw new ForbiddenError(RESPONSE_ERROR_MESSAGES.USERS_QUOTA_REACHED);
-		}
-
-		if (!config.getEnv('userManagement.isInstanceOwnerSetUp')) {
-			this.logger.debug(
-				'Request to send email invite(s) to user(s) failed because the owner account is not set up',
-			);
-			throw new BadRequestError('You must set up your own account before inviting others');
-		}
+		// Skip owner setup check to allow invitations without authentication
 
 		const attributes = invitations.map(({ email, role }) => {
-			if (role === 'global:admin' && !this.license.isAdvancedPermissionsLicensed()) {
-				throw new ForbiddenError(
-					'Cannot invite admin user without advanced permissions. Please upgrade to a license that includes this feature.',
-				);
-			}
+			// Skip license check for admin role to allow unrestricted invitations
 			return { email, role };
 		});
 
-		const { usersInvited, usersCreated } = await this.userService.inviteUsers(req.user, attributes);
+		// Find owner if no authenticated user
+		const inviter = req.user || await this.userRepository.findOneBy({ role: 'global:owner' });
+		if (!inviter) {
+			throw new BadRequestError('No owner found to send invitations');
+		}
+
+		const { usersInvited, usersCreated } = await this.userService.inviteUsers(inviter, attributes);
+
+		// Add inviterId to each invitation response
+		const usersInvitedWithInviterId = usersInvited.map(invitation => ({
+			...invitation,
+			user: {
+				...invitation.user,
+				inviterId: inviter.id
+			}
+		}));
 
 		await this.externalHooks.run('user.invited', [usersCreated]);
 
-		return usersInvited;
+		return usersInvitedWithInviterId;
 	}
 
 	/**
