@@ -29,6 +29,7 @@ const FORM_CONFIG: IFormBoxConfig = {
 				validationRules: [{ name: 'VALID_EMAIL' }],
 				autocomplete: 'email',
 				capitalize: true,
+				focusInitially: true,
 			},
 		},
 		{
@@ -39,7 +40,6 @@ const FORM_CONFIG: IFormBoxConfig = {
 				required: true,
 				autocomplete: 'given-name',
 				capitalize: true,
-				focusInitially: true,
 			},
 		},
 		{
