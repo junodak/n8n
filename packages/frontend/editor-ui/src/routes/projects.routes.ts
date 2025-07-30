@@ -4,6 +4,7 @@ import { useProjectsStore } from '@/stores/projects.store';
 import { getResourcePermissions } from '@n8n/permissions';
 
 const MainSidebar = async () => await import('@/components/MainSidebar.vue');
+const ChatSidebar = async () => await import('@/components/ChatSidebar.vue');
 const WorkflowsView = async () => await import('@/views/WorkflowsView.vue');
 const CredentialsView = async () => await import('@/views/CredentialsView.vue');
 const ProjectSettings = async () => await import('@/views/ProjectSettings.vue');
@@ -23,6 +24,7 @@ const commonChildRoutes: RouteRecordRaw[] = [
 		components: {
 			default: WorkflowsView,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: {
 			middleware: ['authenticated', 'custom'],
@@ -37,6 +39,7 @@ const commonChildRoutes: RouteRecordRaw[] = [
 		components: {
 			default: CredentialsView,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: {
 			middleware: ['authenticated', 'custom'],
@@ -50,6 +53,7 @@ const commonChildRoutes: RouteRecordRaw[] = [
 		components: {
 			default: ExecutionsView,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: {
 			middleware: ['authenticated', 'custom'],
@@ -63,6 +67,7 @@ const commonChildRoutes: RouteRecordRaw[] = [
 		components: {
 			default: WorkflowsView,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: {
 			middleware: ['authenticated', 'custom'],
@@ -131,6 +136,7 @@ export const projectsRoutes: RouteRecordRaw[] = [
 							components: {
 								default: ProjectSettings,
 								sidebar: MainSidebar,
+								chatSidebar: ChatSidebar,
 							},
 							meta: {
 								middleware: ['authenticated', 'custom'],
@@ -174,6 +180,7 @@ export const projectsRoutes: RouteRecordRaw[] = [
 				components: {
 					default: WorkflowsView,
 					sidebar: MainSidebar,
+					chatSidebar: ChatSidebar,
 				},
 				meta: {
 					middleware: ['authenticated', 'custom'],
@@ -189,6 +196,7 @@ export const projectsRoutes: RouteRecordRaw[] = [
 				components: {
 					default: CredentialsView,
 					sidebar: MainSidebar,
+					chatSidebar: ChatSidebar,
 				},
 				meta: {
 					middleware: ['authenticated', 'custom'],

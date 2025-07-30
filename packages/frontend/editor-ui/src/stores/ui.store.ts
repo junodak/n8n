@@ -222,6 +222,8 @@ export const useUIStore = defineStore(STORES.UI, () => {
 	const modalStack = ref<string[]>([]);
 	const sidebarMenuCollapsedPreference = useLocalStorage<boolean>('sidebar.collapsed', false);
 	const sidebarMenuCollapsed = ref<boolean>(sidebarMenuCollapsedPreference.value);
+	const chatSidebarCollapsedPreference = useLocalStorage<boolean>('chatSidebar.collapsed', true);
+	const chatSidebarCollapsed = ref<boolean>(chatSidebarCollapsedPreference.value);
 	const currentView = ref<string>('');
 	const stateIsDirty = ref<boolean>(false);
 	const lastSelectedNode = ref<string | null>(null);
@@ -489,6 +491,12 @@ export const useUIStore = defineStore(STORES.UI, () => {
 		sidebarMenuCollapsed.value = newCollapsedState;
 	};
 
+	const toggleChatSidebarCollapse = () => {
+		const newCollapsedState = !chatSidebarCollapsed.value;
+		chatSidebarCollapsedPreference.value = newCollapsedState;
+		chatSidebarCollapsed.value = newCollapsedState;
+	};
+
 	const removeBannerFromStack = (name: BannerName) => {
 		bannerStack.value = bannerStack.value.filter((bannerName) => bannerName !== name);
 	};
@@ -564,6 +572,8 @@ export const useUIStore = defineStore(STORES.UI, () => {
 		addFirstStepOnLoad,
 		sidebarMenuCollapsed,
 		sidebarMenuCollapsedPreference,
+		chatSidebarCollapsed,
+		chatSidebarCollapsedPreference,
 		bannerStack,
 		theme: computed(() => theme.value),
 		modalsById,
@@ -585,6 +595,7 @@ export const useUIStore = defineStore(STORES.UI, () => {
 		addActiveAction,
 		removeActiveAction,
 		toggleSidebarMenuCollapse,
+		toggleChatSidebarCollapse,
 		dismissBanner,
 		updateBannersHeight,
 		pushBannerToStack,

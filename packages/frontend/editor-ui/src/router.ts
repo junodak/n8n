@@ -29,6 +29,7 @@ const EntityUnAuthorised = async () => await import('./views/EntityUnAuthorised.
 const ForgotMyPasswordView = async () => await import('./views/ForgotMyPasswordView.vue');
 const MainHeader = async () => await import('@/components/MainHeader/MainHeader.vue');
 const MainSidebar = async () => await import('@/components/MainSidebar.vue');
+const ChatSidebar = async () => await import('@/components/ChatSidebar.vue');
 const LogsPanel = async () => await import('@/features/logs/components/LogsPanel.vue');
 const DemoFooter = async () => await import('@/features/logs/components/DemoFooter.vue');
 const NodeView = async () => await import('@/views/NodeView.vue');
@@ -91,6 +92,7 @@ export const routes: RouteRecordRaw[] = [
 		components: {
 			default: TemplatesCollectionView,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: {
 			templatesEnabled: true,
@@ -116,6 +118,7 @@ export const routes: RouteRecordRaw[] = [
 		components: {
 			default: TemplatesWorkflowView,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: {
 			templatesEnabled: true,
@@ -141,6 +144,7 @@ export const routes: RouteRecordRaw[] = [
 		components: {
 			default: SetupWorkflowFromTemplateView,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: {
 			templatesEnabled: true,
@@ -165,6 +169,7 @@ export const routes: RouteRecordRaw[] = [
 		components: {
 			default: TemplatesSearchView,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: {
 			templatesEnabled: true,
@@ -199,6 +204,7 @@ export const routes: RouteRecordRaw[] = [
 		components: {
 			default: VariablesView,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: { middleware: ['authenticated'] },
 	},
@@ -209,6 +215,7 @@ export const routes: RouteRecordRaw[] = [
 			default: NodeView,
 			header: MainHeader,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 			footer: LogsPanel,
 		},
 		meta: {
@@ -229,6 +236,7 @@ export const routes: RouteRecordRaw[] = [
 			default: WorkflowExecutionsView,
 			header: MainHeader,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: {
 			keepWorkflowAlive: true,
@@ -266,6 +274,7 @@ export const routes: RouteRecordRaw[] = [
 			default: EvaluationRootView,
 			header: MainHeader,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		props: {
 			default: true,
@@ -295,6 +304,7 @@ export const routes: RouteRecordRaw[] = [
 		components: {
 			default: WorkflowHistory,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: {
 			middleware: ['authenticated', 'enterprise'],
@@ -312,6 +322,7 @@ export const routes: RouteRecordRaw[] = [
 			default: NodeView,
 			header: MainHeader,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: {
 			templatesEnabled: true,
@@ -327,6 +338,7 @@ export const routes: RouteRecordRaw[] = [
 			default: WorkflowOnboardingView,
 			header: MainHeader,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 		meta: {
 			templatesEnabled: true,
@@ -342,6 +354,7 @@ export const routes: RouteRecordRaw[] = [
 			default: NodeView,
 			header: MainHeader,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 			footer: LogsPanel,
 		},
 		meta: {
@@ -355,6 +368,7 @@ export const routes: RouteRecordRaw[] = [
 		name: VIEWS.DEMO,
 		components: {
 			default: NodeView,
+			chatSidebar: ChatSidebar,
 			footer: DemoFooter,
 		},
 		meta: {
@@ -376,6 +390,7 @@ export const routes: RouteRecordRaw[] = [
 			default: NodeView,
 			header: MainHeader,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 			footer: LogsPanel,
 		},
 		meta: {
@@ -727,6 +742,7 @@ export const routes: RouteRecordRaw[] = [
 		components: {
 			default: EntityNotFound,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 	},
 	{
@@ -736,6 +752,7 @@ export const routes: RouteRecordRaw[] = [
 		components: {
 			default: EntityUnAuthorised,
 			sidebar: MainSidebar,
+			chatSidebar: ChatSidebar,
 		},
 	},
 	{

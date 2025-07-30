@@ -17,6 +17,7 @@ import { useBuilderStore } from '@/stores/builder.store';
 import { useUIStore } from '@/stores/ui.store';
 import { useUsersStore } from '@/stores/users.store';
 import { useSettingsStore } from '@/stores/settings.store';
+import { useChatStore } from '@/stores/chat.store';
 import { useHistoryHelper } from '@/composables/useHistoryHelper';
 import { useStyles } from './composables/useStyles';
 import { locale } from '@n8n/design-system';
@@ -29,6 +30,7 @@ const builderStore = useBuilderStore();
 const uiStore = useUIStore();
 const usersStore = useUsersStore();
 const settingsStore = useSettingsStore();
+const chatStore = useChatStore();
 
 const { setAppZIndexes } = useStyles();
 
@@ -77,6 +79,10 @@ const updateGridWidth = async () => {
 watch([assistantSidebarWidth, builderSidebarWidth], async () => {
 	await updateGridWidth();
 });
+
+const onToggleChat = () => {
+	chatStore.toggleChat();
+};
 
 watch(route, (r) => {
 	hasContentFooter.value = r.matched.some(
@@ -127,6 +133,18 @@ watch(
 				<div v-if="hasContentFooter" :class="$style.contentFooter">
 					<RouterView name="footer" />
 				</div>
+				<div v-if="usersStore.currentUser && !chatStore.isChatOpen" :class="$style.chatFloatingButton">
+					<n8n-icon-button
+						size="large"
+						icon="comment"
+						type="primary"
+						data-test-id="chat-floating-button"
+						@click="onToggleChat"
+					/>
+				</div>
+			</div>
+			<div v-if="chatStore.isChatOpen" id="chat-sidebar" :class="$style.chatSidebar">
+				<RouterView name="chatSidebar" />
 			</div>
 			<div :id="APP_MODALS_ELEMENT_ID" :class="$style.modals">
 				<Modals />
@@ -154,10 +172,10 @@ watch(
 	display: grid;
 	height: 100vh;
 	grid-template-areas:
-		'banners banners'
-		'sidebar header'
-		'sidebar content';
-	grid-template-columns: auto 1fr;
+		'banners banners banners'
+		'sidebar header chatSidebar'
+		'sidebar content chatSidebar';
+	grid-template-columns: auto 1fr auto;
 	grid-template-rows: auto auto 1fr;
 }
 
@@ -211,7 +229,19 @@ watch(
 	z-index: var(--z-index-app-sidebar);
 }
 
+.chatSidebar {
+	grid-area: chatSidebar;
+	z-index: 2000; /* NodeCreator(1700)보다 높게 설정 */
+}
+
 .modals {
 	width: 100%;
+}
+
+.chatFloatingButton {
+	position: absolute;
+	bottom: var(--spacing-l);
+	right: var(--spacing-l);
+	z-index: 2500; /* NodeCreator(1700)보다 높게 설정 */
 }
 </style>

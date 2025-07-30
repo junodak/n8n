@@ -13,6 +13,7 @@ import { useCredentialsStore } from '@/stores/credentials.store';
 import { useUIStore } from '@/stores/ui.store';
 import { DRAG_EVENT_DATA_KEY } from '@/constants';
 import { useAssistantStore } from '@/stores/assistant.store';
+import { useChatStore } from '@/stores/chat.store';
 import N8nIconButton from '@n8n/design-system/components/N8nIconButton/IconButton.vue';
 import { useBuilderStore } from '@/stores/builder.store';
 import type { NodeTypeSelectedPayload } from '@/Interface';
@@ -33,6 +34,7 @@ const emit = defineEmits<{
 const uiStore = useUIStore();
 const assistantStore = useAssistantStore();
 const builderStore = useBuilderStore();
+const chatStore = useChatStore();
 
 const { setShowScrim, setActions, setMergeNodes } = useNodeCreatorStore();
 const { generateMergedNodesAndActions } = useActionsGenerator();
@@ -52,6 +54,9 @@ const nodeCreatorInlineStyle = computed(() => {
 });
 
 function getRightOffset() {
+	if (chatStore.isChatOpen) {
+		return chatStore.chatWidth;
+	}
 	if (assistantStore.isAssistantOpen) {
 		return assistantStore.chatWidth;
 	}
